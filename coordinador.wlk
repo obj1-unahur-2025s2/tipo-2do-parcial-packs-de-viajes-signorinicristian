@@ -26,7 +26,7 @@ class Coordinador {
     }
 
     method esAltamenteCalificado() {
-        return cantViajesRealizados > 20 && guia.condicion(self)
+        return cantViajesRealizados > 20 && rol.condicion(self)
     }
 }
 
