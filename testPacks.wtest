@@ -93,6 +93,12 @@ describe "Test de packs" {
 
     assert.equals(packProvincialPremium.esPremium(), true)
   }
+
+  test "Cambiar rol a uno inválido lanza error" {
+      const coordinadorSiete = new Coordinador(cantViajesRealizados = 5, estaMotivado = false, añosDeExperiencia = 1, rol = acompañante)
+        
+      assert.throwsExceptionWithMessage("Rol inválido", {coordinadorSiete.cambiarRol("rol invalido")})
+  }
 }
 
 describe "Test de coordinador" {
