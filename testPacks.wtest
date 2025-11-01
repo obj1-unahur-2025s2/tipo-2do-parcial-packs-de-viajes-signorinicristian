@@ -1,1 +1,113 @@
-// completar
+import packs.*
+import coordinador.*
+
+describe "Test de packs" {
+  test "Pack nacional sin beneficios vigentes devuelve el mismo precio base" {
+    const coordinadorUno = new Coordinador(cantViajesRealizados = 10, estaMotivado = true, añosDeExperiencia = 5, rol = guia)
+    const packNacional = new PackNacional(
+      duracionEnDias = 5,
+      precioBase = 1000,
+      beneficios = #{},
+      coordinador = coordinadorUno,
+      provinciaDestino = "Mendoza",
+      actividades = #{"Visita a bodegas", "Trekking"}
+    )
+
+    assert.equals(packNacional.precioBase(), packNacional.valorFinal())
+  }
+
+  test "Pack nacional con 2 beneficios vigentes suma correctamente sus costos al precio base" {
+    const coordinadorDos = new Coordinador(cantViajesRealizados = 15, estaMotivado = true, añosDeExperiencia = 7, rol = asistenteLogistico)
+    const beneficioUno = new Beneficio(tipo = "Descuento en alojamiento", costo = 200, estaVigente = true)
+    const beneficioDos = new Beneficio(tipo = "Tour gratuito", costo = 150, estaVigente = true)
+    const packNacionalConBeneficios = new PackNacional(
+      duracionEnDias = 7,
+      precioBase = 1500,
+      beneficios = #{beneficioUno, beneficioDos},
+      coordinador = coordinadorDos,
+      provinciaDestino = "Salta",
+      actividades = #{"Visita a ruinas", "Caminata por la montaña"}
+    )
+
+    assert.equals(packNacionalConBeneficios.valorFinal(), 1850)
+  }
+
+  test "Pack internacional sin beneficios vigentes calcula correctamente el total con el 20% de recargo" {
+    const coordinadorTres = new Coordinador(cantViajesRealizados = 20, estaMotivado = false, añosDeExperiencia = 10, rol = acompañante)
+    const packInternacional = new PackInternacional(
+      duracionEnDias = 10,
+      precioBase = 3000,
+      beneficios = #{},
+      coordinador = coordinadorTres,
+      paisDestino = "Italia",
+      cantidadEscalas = 2,
+      esLugarDeInteres = true
+    )
+
+    assert.equals(packInternacional.valorFinal(), 3600)
+  }
+
+  test "Pack nacional es premium si dura más de 10 días y el coordinador es altamente calificado" {
+    const coordinadorCuatro = new Coordinador(cantViajesRealizados = 25, estaMotivado = true, añosDeExperiencia = 8, rol = guia)
+    const packNacionalPremium = new PackNacional(
+      duracionEnDias = 12,
+      precioBase = 2000,
+      beneficios = #{},
+      coordinador = coordinadorCuatro,
+      provinciaDestino = "Patagonia",
+      actividades = #{"Esquí", "Senderismo"}
+    )
+
+    assert.equals(packNacionalPremium.esPremium(), true)
+  }
+
+  test "Pack internacional es premium si es lugar de interés, dura más de 20 días y no tiene escalas" {
+      const coordinadorCinco = new Coordinador(cantViajesRealizados = 30, estaMotivado = true, añosDeExperiencia = 12, rol = asistenteLogistico)
+      const packInternacionalPremium = new PackInternacional(
+      duracionEnDias = 25,
+      precioBase = 5000,
+      beneficios = #{},
+      coordinador = coordinadorCinco,
+      paisDestino = "Japón",
+      cantidadEscalas = 0,
+      esLugarDeInteres = true
+      )
+    
+      assert.equals(packInternacionalPremium.esPremium(), true)
+  }
+
+  test "Pack provincial es premium si tiene al menos 4 actividades, más de 5 ciudades y 3 beneficios" {
+    const coordinadorSeis = new Coordinador(cantViajesRealizados = 18, estaMotivado = true, añosDeExperiencia = 6, rol = acompañante)
+    const beneficioTres = new Beneficio(tipo = "Descuento en transporte", costo = 100, estaVigente = true)
+    const beneficioCuatro = new Beneficio(tipo = "Entrada gratuita a museos", costo = 80, estaVigente = true)
+    const beneficioCinco = new Beneficio(tipo = "Tour gastronómico", costo = 120, estaVigente = true)
+    const packProvincialPremium = new PackProvincial(
+      duracionEnDias = 8,
+      precioBase = 1800,
+      beneficios = #{beneficioTres, beneficioCuatro, beneficioCinco},
+      coordinador = coordinadorSeis,
+      provinciaDestino = "Córdoba",
+      actividades = #{"Visita a museos", "Tour gastronómico", "Caminata urbana", "Visita a iglesias"},
+      cantidadCiudades = 6
+    )
+
+    assert.equals(packProvincialPremium.esPremium(), true)
+  }
+}
+
+describe "Test de coordinador" {
+    test "Guía motivado con 21 viajes" {
+        const coordinador = new Coordinador(cantViajesRealizados = 21, estaMotivado = true, añosDeExperiencia = 5, rol = guia)
+        assert.equals(coordinador.esAltamenteCalificado(), true)
+    }
+
+    test "Asistente logístico con menos de 3 años de experiencia" {
+        const coordinador = new Coordinador(cantViajesRealizados = 10, estaMotivado = true, añosDeExperiencia = 2, rol = asistenteLogistico)
+        assert.equals(coordinador.esAltamenteCalificado(), false)
+    }
+
+    test "Acompañante con 25 viajes" {
+        const coordinador = new Coordinador(cantViajesRealizados = 25, estaMotivado = true, añosDeExperiencia = 1, rol = acompañante)
+        assert.equals(coordinador.esAltamenteCalificado(), true)
+    }
+}
