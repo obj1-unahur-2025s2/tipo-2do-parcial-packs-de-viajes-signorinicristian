@@ -12,6 +12,8 @@ class Pack {
         return precioBase + costoBeneficios
     }
 
+    method esPremium()
+
     method duracionEnDias() = duracionEnDias
 
     method precioBase() = precioBase
@@ -19,8 +21,6 @@ class Pack {
     method beneficios() = beneficios
 
     method coordinador() = coordinador
-
-    method esPremium()
 }
 
 class PackNacional inherits Pack {
